@@ -11,7 +11,7 @@ import service.TaskService;
 import exception.InvalidInputException;
 import exception.TaskNotFoundException;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * TaskTests — Unit tests for Task operations using JUnit 5.
@@ -29,25 +29,25 @@ public class TaskTests {
         // Add a base project for testing
         projectService.createProject(new SoftwareProject("P006", "Test", "Desc", 1000.0, 5, 5, "Java"));
     }
-//
-//    @Test
-//    void testCreateTask_Success() throws Exception {
-//        Task task = new Task("T001", "New Task", "Pending");
-//        taskService.createTask("P006", task);
-//
-//        Task retrieved = taskService.getTaskById("P006", "T001");
-//        assertNotNull(retrieved);
-//        assertEquals("New Task", retrieved.getName());
-//    }
 
-//    @Test
-//    void testUpdateTaskStatus_Success() throws Exception {
-//        taskService.createTask("P001", new Task("T001", "Task", "Pending"));
-//        taskService.updateTaskStatus("P001", "T001", "Completed");
-//
-//        Task retrieved = taskService.getTaskById("P001", "T001");
-//        assertTrue(retrieved.isCompleted());
-//    }
+   @Test
+ void testCreateTask_Success() throws Exception {
+        Task task = new Task("T001", "New Task", "Pending");
+       taskService.createTask("P006", task);
+
+       Task retrieved = taskService.getTaskById("P006", "T001");
+        assertNotNull(retrieved);
+       assertEquals("New Task", retrieved.getName());
+   }
+
+   @Test
+    void testUpdateTaskStatus_Success() throws Exception {
+      taskService.createTask("P001", new Task("T001", "Task", "Pending"));
+       taskService.updateTaskStatus("P001", "T001", "Completed");
+
+       Task retrieved = taskService.getTaskById("P001", "T001");
+       assertTrue(retrieved.isCompleted());
+    }
 
     @Test
     void testUpdateTaskStatus_TaskNotFound_ThrowsException() {
@@ -56,10 +56,10 @@ public class TaskTests {
         });
     }
 
-//    @Test
-//    void testCreateTask_InvalidInput_ThrowsException() {
-//        assertThrows(InvalidInputException.class, () -> {
-//            taskService.createTask("P001", null);
-//        });
-//    }
+    @Test
+   void testCreateTask_InvalidInput_ThrowsException() {
+      assertThrows(InvalidInputException.class, () -> {
+          taskService.createTask("P001", null);
+       });
+   }
 }

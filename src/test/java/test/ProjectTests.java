@@ -26,9 +26,11 @@ public class ProjectTests {
 
     @Test
     void testCalculateCompletionPercentage_EmptyProject_ThrowsException() {
-        assertThrows(EmptyProjectException.class, () -> {
+        Exception exc = assertThrows(EmptyProjectException.class, () -> {
             softwareProject.calculateCompletionPercentage();
         });
+        System.out.println(exc.getMessage());
+
     }
 
     @Test
