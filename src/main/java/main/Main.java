@@ -13,18 +13,11 @@ public class Main {
     private static final ProjectService projectService = new ProjectService();
     private static final TaskService    taskService    = new TaskService(projectService);
     private static final ReportService  reportService  = new ReportService();
-
-    // ── Sample users (Polymorphism: User[] holds both subtypes) ───────────────
-    private static final User[] users = {
-        new AdminUser("Alice Smith",   "alice@example.com"),
-        new RegularUser("Bob Jones",   "bob@example.com"),
-        new RegularUser("Carol White", "carol@example.com"),
-        new AdminUser("Dave Brown",    "dave@example.com")
-    };
+    private static final UserService    userService    = new UserService();
 
     // ── Scanner and Current User ─────────────────────────────────────────────
     private static final Scanner sc = new Scanner(System.in);
-    private static User currentUser = users[0]; // Default to first admin
+    private static User currentUser = userService.getUserByIndex(0); // Default to first (Alice)
 
     // ═════════════════════════════════════════════════════════════════════════
     public static void main(String[] args) {
@@ -113,8 +106,9 @@ public class Main {
             switch (choice) {
                 case 1: viewUsers(); break;
                 case 2: switchUser(); break;
+                case 3: registerUser(); break;
                 case 0: return;
-                default: ConsoleMenu.error("Invalid choice 0-2.");
+                default: ConsoleMenu.error("Invalid choice 0-3.");
             }
             if (choice != 0) pauseForUser();
         } while (choice != 0);
@@ -434,16 +428,16 @@ public class Main {
 
     /** Menu option 9 — View all registered users. */
     private static void viewUsers() {
-        ConsoleMenu.printSectionHeader("REGISTERED USERS");
-        ConsoleMenu.printUserListHeader();
+        ConsoleMenu.printUserHeader();
+        User[] allUsers = userService.getAllUsers();
         // Polymorphism: User variable iterates AdminUser and RegularUser objects
-        for (User u : users) {
+        for (User u : allUsers) {
             System.out.printf("  %-5d  %-20s  %-30s  %-15s%n",
                     u.getId(), u.getName(), u.getEmail(), u.getRole());
             System.out.println("         ↳ " + u.getRoleDescription());
         }
         System.out.println();
-        ConsoleMenu.info("Total users: " + users.length);
+        ConsoleMenu.info("Total users: " + allUsers.length);
         pauseForUser();
     }
 
@@ -453,14 +447,15 @@ public class Main {
 
     private static void switchUser() {
         ConsoleMenu.printSectionHeader("SWITCH USER");
-        for (int i = 0; i < users.length; i++) {
-            System.out.println("  " + (i + 1) + ". " + users[i].getName() + " (" + users[i].getRole() + ")");
+        User[] allUsers = userService.getAllUsers();
+        for (int i = 0; i < allUsers.length; i++) {
+            System.out.println("  " + (i + 1) + ". " + allUsers[i].getName() + " (" + allUsers[i].getRole() + ")");
         }
-        System.out.print("  Select user (1-" + users.length + "): ");
+        System.out.print("  Select user (1-" + allUsers.length + "): ");
         try {
             int choice = Integer.parseInt(sc.nextLine().trim());
-            if (choice >= 1 && choice <= users.length) {
-                currentUser = users[choice - 1];
+            if (choice >= 1 && choice <= allUsers.length) {
+                currentUser = allUsers[choice - 1];
                 ConsoleMenu.success("User switched to: " + currentUser.getName() + " (" + currentUser.getRole() + ")");
             } else {
                 ConsoleMenu.error("Invalid choice.");
@@ -480,6 +475,58 @@ public class Main {
                 type,
                 p.getTeamSize(),
                 p.getTaskCount());
+    }
+
+    /** Menu option (Admin only) — Register a new user. */
+    private static void registerUser() {
+        ConsoleMenu.printSectionHeader("REGISTER NEW USER");
+
+        if (!currentUser.isAdmin()) {
+            ConsoleMenu.error("Access Denied: Only Admin users can register new users.");
+            pauseForUser();
+            return;
+        }
+
+        try {
+            // Role type
+            System.out.println("  Select user role:");
+            System.out.println("    1. Regular User");
+            System.out.println("    2. Admin User");
+            System.out.print("  Select role (1/2): ");
+            int roleChoice = Integer.parseInt(sc.nextLine().trim());
+            if (roleChoice != 1 && roleChoice != 2) {
+                ConsoleMenu.error("Invalid choice. Enter 1 or 2.");
+                return;
+            }
+
+            // Name
+            ConsoleMenu.prompt("User's Full Name");
+            String name = sc.nextLine().trim();
+            if (!ValidationUtils.validateNonEmpty(name, "User Name")) return;
+
+            // Email
+            ConsoleMenu.prompt("User's Email");
+            String email = sc.nextLine().trim();
+            if (!ValidationUtils.validateEmail(email)) return;
+            if (userService.emailExists(email)) {
+                ConsoleMenu.error("Email already exists: " + email);
+                return;
+            }
+
+            User newUser;
+            if (roleChoice == 1) {
+                newUser = new RegularUser(name, email);
+            } else {
+                newUser = new AdminUser(name, email);
+            }
+
+            userService.addUser(newUser);
+            ConsoleMenu.success("User " + name + " (" + newUser.getRole() + ") registered successfully!");
+
+        } catch (NumberFormatException e) {
+            ConsoleMenu.error("Invalid input. Selection must be a number.");
+        }
+        pauseForUser();
     }
 
     /** Waits for the user to press ENTER before returning to the menu. */

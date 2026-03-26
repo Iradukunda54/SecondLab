@@ -61,9 +61,15 @@ public class ConsoleMenu {
         System.out.println("  ├─────────────────────────────────────────────────┤");
         System.out.println("  │  1. View Registered Users                       │");
         System.out.println("  │  2. Switch Current User                         │");
+        System.out.println("  │  3. Register New User (Admin Only)              │");
         System.out.println("  │  0. Back to Main Menu                           │");
         System.out.println("  └─────────────────────────────────────────────────┘");
         System.out.print("  Enter choice: ");
+    }
+
+    public static void printUserHeader() {
+        printSectionHeader("REGISTERED USERS");
+        printUserListHeader();
     }
 
     // ── Section headers ───────────────────────────────────────────────────────

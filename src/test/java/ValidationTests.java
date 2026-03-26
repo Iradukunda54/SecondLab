@@ -10,7 +10,7 @@ public class ValidationTests {
 
     @Test
     void testValidateEmail() {
-        assertTrue(ValidationUtils.validateEmail("test@example.com"));
+        assertTrue(ValidationUtils.validateEmail("test@gmail.com"));
         assertFalse(ValidationUtils.validateEmail("invalid-email"));
     }
 

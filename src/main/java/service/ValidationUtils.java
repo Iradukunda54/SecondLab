@@ -19,9 +19,9 @@ public class ValidationUtils {
     private static final Pattern TASK_ID_PATTERN = Pattern.compile("^T\\d{3}$");
 
     /**
-     * Validates Email format using a simple regex.
+     * Validates Email format strictly requiring @gmail.com.
      */
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@gmail\\.com$");
 
     public static boolean validateEmail(String email) {
         if (email == null || email.trim().isEmpty()) {
@@ -29,7 +29,7 @@ public class ValidationUtils {
             return false;
         }
         if (!EMAIL_PATTERN.matcher(email.trim()).matches()) {
-            printError("Invalid email format (e.g. user@example.com).");
+            printError("Invalid email format. Must end with @gmail.com (e.g. user@gmail.com).");
             return false;
         }
         return true;
