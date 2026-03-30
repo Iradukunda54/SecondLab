@@ -1,7 +1,8 @@
 package model;
 
 import exception.EmptyProjectException;
-import model.Task;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Project — Abstract base class for all project types.
@@ -16,22 +17,18 @@ public abstract class Project {
     private double budget;
     private int    teamSize;
 
-    // ── Task storage (array-based, no external libraries) ─────────────────────
-    private Task[] tasks;
-    private int    taskCount;
-    private int    maxTasks;
+    // ── Task storage (Collections-based) ─────────────────────────────────────
+    private List<Task> tasks;
 
     // ── Constructor ───────────────────────────────────────────────────────────
     public Project(String id, String name, String description,
-                   double budget, int teamSize, int maxTasks) {
+                   double budget, int teamSize) {
         this.id          = id;
         this.name        = name;
         this.description = description;
         this.budget      = budget;
         this.teamSize    = teamSize;
-        this.maxTasks    = maxTasks;
-        this.tasks       = new Task[maxTasks];
-        this.taskCount   = 0;
+        this.tasks       = new ArrayList<>();
     }
 
     // ── Abstract method ───────────────────────────────────────────────────────
@@ -42,17 +39,14 @@ public abstract class Project {
      * Calculates the completion percentage of the project.
      * @throws EmptyProjectException if the project has no tasks.
      */
-    public double calculateCompletionPercentage() throws EmptyProjectException {
-        if (taskCount == 0) {
+    public double calculateCompletionPercentage()  {
+        if (tasks.isEmpty()) {
             throw new EmptyProjectException("Project '" + name + "' (" + id + ") has no tasks.");
         }
-        int completedCount = 0;
-        for (int i = 0; i < taskCount; i++) {
-            if (tasks[i].isCompleted()) {
-                completedCount++;
-            }
-        }
-        double percentage = ((double) completedCount / taskCount) * 100;
+        long completedCount = tasks.stream()
+                .filter(Task::isCompleted)
+                .count();
+        double percentage = ((double) completedCount / tasks.size()) * 100;
         return Math.round(percentage * 100.0) / 100.0;
     }
 
@@ -62,42 +56,38 @@ public abstract class Project {
      * @return false if the task array is full or a duplicate ID exists.
      */
     public boolean addTask(Task task) {
-        if (taskCount >= maxTasks) {
-            System.out.println("  [!] Task limit reached for project " + id);
+        // Check for duplicate task IDs using Streams
+        boolean duplicate = tasks.stream()
+                .anyMatch(t -> t.getId().equalsIgnoreCase(task.getId()));
+        
+        if (duplicate) {
+            System.out.println("  [!] Duplicate task ID: " + task.getId());
             return false;
         }
-        // Check for duplicate task IDs
-        for (int i = 0; i < taskCount; i++) {
-            if (tasks[i].getId().equalsIgnoreCase(task.getId())) {
-                System.out.println("  [!] Duplicate task ID: " + task.getId());
-                return false;
-            }
-        }
-        tasks[taskCount++] = task;
-        return true;
+        
+        return tasks.add(task);
     }
 
     /**
      * Returns the task at index i (0-based).
      */
     public Task getTask(int index) {
-        if (index < 0 || index >= taskCount) return null;
-        return tasks[index];
+        if (index < 0 || index >= tasks.size()) return null;
+        return tasks.get(index);
     }
 
-    public Task[] getTasks()   { return tasks; }
-    public int    getTaskCount() { return taskCount; }
+    public List<Task> getTaskList() { return tasks; }
+    public Task[] getTasks()      { return tasks.toArray(new Task[0]); }
+    public int    getTaskCount()  { return tasks.size(); }
 
     /**
      * Finds and returns a task by its ID, or null if not found.
      */
     public Task findTaskById(String taskId) {
-        for (int i = 0; i < taskCount; i++) {
-            if (tasks[i].getId().equalsIgnoreCase(taskId)) {
-                return tasks[i];
-            }
-        }
-        return null;
+        return tasks.stream()
+                .filter(t -> t.getId().equalsIgnoreCase(taskId))
+                .findFirst()
+                .orElse(null);
     }
 
     // ── Concrete display ──────────────────────────────────────────────────────
@@ -113,7 +103,7 @@ public abstract class Project {
         System.out.printf ("  │ Budget      : $%-28.2f│%n", budget);
         System.out.printf ("  │ Team Size   : %-29d│%n", teamSize);
         System.out.printf ("  │ Type Detail : %-29s│%n", getProjectDetails());
-        System.out.printf ("  │ Tasks       : %-29d│%n", taskCount);
+        System.out.printf ("  │ Tasks       : %-29d│%n", tasks.size());
         System.out.println("  └─────────────────────────────────────────────┘");
     }
 
@@ -124,6 +114,9 @@ public abstract class Project {
     public double getBudget()      { return budget; }
     public int    getTeamSize()    { return teamSize; }
 
+    /** Returns the project type — overridden by subclasses. */
+    public String getType()        { return "Unknown"; }
+
     // ── Setters ───────────────────────────────────────────────────────────────
     public void setName(String name)               { this.name = name; }
     public void setDescription(String description) { this.description = description; }
@@ -132,6 +125,6 @@ public abstract class Project {
 
     @Override
     public String toString() {
-        return id + " | " + name + " | Tasks: " + taskCount;
+        return id + " | " + name + " | Tasks: " + tasks.size();
     }
 }

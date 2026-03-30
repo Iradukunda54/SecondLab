@@ -9,7 +9,6 @@ import java.util.List;
 
 /**
  * UserService — Handles user-related operations and data storage.
- * In a real app, this would interact with a database.
  */
 public class UserService {
 
@@ -27,7 +26,7 @@ public class UserService {
         users.add(new AdminUser("Dave Brown",    "dave@gmail.com"));
     }
 
-    /** Returns a copy of the users list. */
+    /** Returns all users as an array. */
     public User[] getAllUsers() {
         return users.toArray(new User[0]);
     }
@@ -37,7 +36,7 @@ public class UserService {
         users.add(user);
     }
 
-    /** Finds a user by their list index (1-based choice in UI). */
+    /** Returns user by zero-based index, or null. */
     public User getUserByIndex(int index) {
         if (index >= 0 && index < users.size()) {
             return users.get(index);
@@ -52,11 +51,20 @@ public class UserService {
 
     /** Checks if an email is already registered. */
     public boolean emailExists(String email) {
-        for (User u : users) {
-            if (u.getEmail().equalsIgnoreCase(email)) {
-                return true;
-            }
-        }
-        return false;
+        return users.stream()
+                .anyMatch(u -> u.getEmail().equalsIgnoreCase(email));
+    }
+
+    /**
+     * Registers a new user and adds them to the system.
+     * @param name    full name
+     * @param email   must end with @gmail.com
+     * @param isAdmin true = AdminUser, false = RegularUser
+     */
+    public void registerUser(String name, String email, boolean isAdmin) {
+        User newUser = isAdmin ? new AdminUser(name, email) : new RegularUser(name, email);
+        users.add(newUser);
+        System.out.printf("  [✓] User '%s' registered as %s.%n",
+                name, isAdmin ? "Admin" : "Regular User");
     }
 }

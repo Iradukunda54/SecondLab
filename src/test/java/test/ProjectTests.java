@@ -20,13 +20,13 @@ public class ProjectTests {
 
     @BeforeEach
     void setUp() {
-        softwareProject = new SoftwareProject("P001", "Web App", "Java project", 50000.0, 5, 10, "Java");
-        hardwareProject = new HardwareProject("P002", "IoT Hub", "Embedded project", 30000.0, 3, 5, "ESP32");
+        softwareProject = new SoftwareProject("P001", "Web App", "Java project", 50000.0, 5, "Java");
+        hardwareProject = new HardwareProject("P002", "IoT Hub", "Embedded project", 30000.0, 3, "ESP32");
     }
 
     @Test
     void testCalculateCompletionPercentage_EmptyProject_ThrowsException() {
-        Exception exc = assertThrows(EmptyProjectException.class, () -> {
+        EmptyProjectException exc = assertThrows(EmptyProjectException.class, () -> {
             softwareProject.calculateCompletionPercentage();
         });
         System.out.println(exc.getMessage());
@@ -48,10 +48,10 @@ public class ProjectTests {
     }
 
     @Test
-    void testAddTask_LimitReached() {
-        Project tiny = new SoftwareProject("P003", "Tiny", "Desc", 100.0, 1, 1);
-        assertTrue(tiny.addTask(new Task("T001", "T1", "Pending")));
-        assertFalse(tiny.addTask(new Task("T002", "T2", "Pending")), "Should not add beyond limit");
+    void testAddTask_DuplicateId() {
+        Task t1 = new Task("T001", "T1", "Pending");
+        assertTrue(softwareProject.addTask(t1));
+        assertFalse(softwareProject.addTask(new Task("T001", "T1-Dup", "Pending")), "Should not add duplicate ID");
     }
 
     @Test

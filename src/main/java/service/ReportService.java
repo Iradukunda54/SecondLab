@@ -22,10 +22,9 @@ public class ReportService {
         try {
             double pct = project.calculateCompletionPercentage();
             int total = project.getTaskCount();
-            int completed = 0;
-            for (int i = 0; i < total; i++) {
-                if (project.getTask(i).isCompleted()) completed++;
-            }
+            long completed = project.getTaskList().stream()
+                    .filter(Task::isCompleted)
+                    .count();
 
             System.out.println("  Status: ACTIVE");
             System.out.println("  Tasks: " + total + " total, " + completed + " completed");
@@ -42,21 +41,16 @@ public class ReportService {
     /**
      * Generates a StatusReport for every project in the given array.
      */
-    public StatusReport[] generateReport(Project[] projects) {
-        StatusReport[] reports = new StatusReport[projects.length];
-
-        for (int i = 0; i < projects.length; i++) {
-            Project project       = projects[i];
-            int     totalTasks    = project.getTaskCount();
-            int     completedCount = 0;
-
-            // Count manually for the report row data
-            for (int j = 0; j < totalTasks; j++) {
-                if (project.getTask(j).isCompleted()) completedCount++;
-            }
-            reports[i] = new StatusReport(project.getId(), project.getName(), totalTasks, completedCount);
-        }
-        return reports;
+    public StatusReport[] generateReport(java.util.Collection<Project> projects) {
+        return projects.stream()
+                .map(project -> {
+                    int totalTasks = project.getTaskCount();
+                    long completedCount = project.getTaskList().stream()
+                            .filter(Task::isCompleted)
+                            .count();
+                    return new StatusReport(project.getId(), project.getName(), totalTasks, (int) completedCount);
+                })
+                .toArray(StatusReport[]::new);
     }
 
     /**
@@ -65,11 +59,10 @@ public class ReportService {
      */
     public double calculateAverageCompletion(StatusReport[] reports) {
         if (reports == null || reports.length == 0) return 0.00;
-        double sum = 0;
-        for (StatusReport r : reports) {
-            sum += r.getCompletionPercentage();
-        }
-        double avg = sum / reports.length;
+        double avg = java.util.Arrays.stream(reports)
+                .mapToDouble(StatusReport::getCompletionPercentage)
+                .average()
+                .orElse(0.00);
         // Round to 2 decimal places
         return Math.round(avg * 100.0) / 100.0;
     }

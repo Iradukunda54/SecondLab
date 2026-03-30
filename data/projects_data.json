@@ -1,0 +1,64 @@
+[
+  {
+    "projectId": "P001",
+    "name": "E-Commerce System",
+    "type": "Software",
+    "description": "A full-scale online store platform.",
+    "budget": 50000.0,
+    "teamSize": 8,
+    "language": "Java/Spring",
+    "tasks": [
+      {"id": "T001", "name": "Setup Database", "status": "In Progress"},
+      {"id": "T002", "name": "Implement Auth", "status": "Completed"}
+    ]
+  },
+  {
+    "projectId": "P002",
+    "name": "Smart Irrigation",
+    "type": "Hardware",
+    "description": "IoT-based water management for farms.",
+    "budget": 15000.0,
+    "teamSize": 3,
+    "hardwareType": "ESP32",
+    "tasks": [
+      {"id": "T003", "name": "Sensor Calibration", "status": "Completed"}
+    ]
+  },
+  {
+    "projectId": "P003",
+    "name": "Mobile Banking App",
+    "type": "Software",
+    "description": "Secure mobile finance application.",
+    "budget": 75000.0,
+    "teamSize": 12,
+    "language": "Kotlin",
+    "tasks": [
+      {"id": "T004", "name": "UI Mockups", "status": "In Progress"}
+    ]
+  },
+  {
+    "projectId": "P004",
+    "name": "Drone Surveillance",
+    "type": "Hardware",
+    "description": "Autonomous drone for security monitoring.",
+    "budget": 30000.0,
+    "teamSize": 5,
+    "hardwareType": "Raspberry Pi 4",
+    "tasks": [
+      {"id": "T005", "name": "Flight Testing", "status": "Pending"}
+    ]
+  },
+  {
+    "projectId": "P005",
+    "name": "HR Portal",
+    "type": "Software",
+    "description": "Internal employee management system.",
+    "budget": 20000.0,
+    "teamSize": 4,
+    "language": "Python/Django",
+    "tasks": [
+      {"id": "T006", "name": "API Documentation", "status": "In Progress"},
+      {"id": "T007", "name": "Frontend Layout", "status": "Pending"}
+    ]
+  }
+]

@@ -3,8 +3,10 @@ package service;
 import model.Project;
 import model.Task;
 import exception.InvalidInputException;
-import exception.InvalidTaskDataException;
 import exception.TaskNotFoundException;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * TaskService — Handles task-level operations within projects.
@@ -83,18 +85,13 @@ public class TaskService {
     }
 
     /**
-     * Returns the tasks array for a given project, or null if project not found.
+     * Returns the tasks for a given project, or null if project not found.
+     * Uses Streams to return a list.
      */
-    public Task[] getTasksForProject(String projectId) {
+    public java.util.List<Task> getTasksForProject(String projectId) {
         Project project = projectService.findById(projectId);
         if (project == null) return null;
-        // Return a properly sized copy
-        int   count  = project.getTaskCount();
-        Task[] result = new Task[count];
-        for (int i = 0; i < count; i++) {
-            result[i] = project.getTask(i);
-        }
-        return result;
+        return project.getTaskList();
     }
 
     /**
@@ -104,5 +101,27 @@ public class TaskService {
         Project project = projectService.findById(projectId);
         if (project == null) return false;
         return project.findTaskById(taskId) != null;
+    }
+
+    /**
+     * Filters tasks in a project by status using Predicate<Task>.
+     * Demonstrates: Functional Programming with Predicate (Week 3).
+     */
+    public List<Task> filterByStatus(String projectId, String status) {
+        Predicate<Task> byStatus = t -> t.getStatus().equalsIgnoreCase(status);
+        return getTasksForProject(projectId).stream()
+                .filter(byStatus)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns tasks using a custom Predicate for flexible filtering.
+     */
+    public List<Task> filterTasks(String projectId, Predicate<Task> predicate) {
+        List<Task> tasks = getTasksForProject(projectId);
+        if (tasks == null) return List.of();
+        return tasks.stream()
+                .filter(predicate)
+                .collect(Collectors.toList());
     }
 }

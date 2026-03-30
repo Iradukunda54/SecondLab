@@ -19,13 +19,13 @@ public class ConsoleMenu {
     // ── Main menu ─────────────────────────────────────────────────────────────
     public static void printMainMenu() {
         System.out.println("  ┌─────────────────────────────────────────────────┐");
-        System.out.println("  │                    MAIN MENU                    │");
+        System.out.println("  │            JAVA PROJECT MANAGEMENT v3.0         │");
         System.out.println("  ├─────────────────────────────────────────────────┤");
-        System.out.println("  │  1. Manage Projects                             │");
-        System.out.println("  │  2. Manage Tasks                                │");
-        System.out.println("  │  3. View Status Reports                         │");
-        System.out.println("  │  4. Manage Users                                │");
-        System.out.println("  │  0. Exit                                        │");
+        System.out.println("  │  1. Project Management (Add/View/Details)       │");
+        System.out.println("  │  2. Task Management    (Add/Update/View)        │");
+        System.out.println("  │  3. Advanced Features  (Streams/Concurrency)     │");
+        System.out.println("  │  4. User Management    (Switch/View)            │");
+        System.out.println("  │  0. Save and Exit                               │");
         System.out.println("  └─────────────────────────────────────────────────┘");
         System.out.print("  Enter choice: ");
     }
@@ -62,6 +62,18 @@ public class ConsoleMenu {
         System.out.println("  │  1. View Registered Users                       │");
         System.out.println("  │  2. Switch Current User                         │");
         System.out.println("  │  3. Register New User (Admin Only)              │");
+        System.out.println("  │  0. Back to Main Menu                           │");
+        System.out.println("  └─────────────────────────────────────────────────┘");
+        System.out.print("  Enter choice: ");
+    }
+
+    public static void printAdvancedMenu() {
+        System.out.println("  ┌─────────────────────────────────────────────────┐");
+        System.out.println("  │               ADVANCED FEATURES                 │");
+        System.out.println("  ├─────────────────────────────────────────────────┤");
+        System.out.println("  │  1. View Status Report (Streams)                │");
+        System.out.println("  │  2. Functional Programming Demo                 │");
+        System.out.println("  │  3. Simulate Concurrent Updates (Threads)       │");
         System.out.println("  │  0. Back to Main Menu                           │");
         System.out.println("  └─────────────────────────────────────────────────┘");
         System.out.print("  Enter choice: ");

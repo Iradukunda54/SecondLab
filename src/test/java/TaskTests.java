@@ -1,15 +1,11 @@
-
-
+package test;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import model.Task;
-import model.SoftwareProject;
-import service.ProjectService;
-import service.TaskService;
-import exception.InvalidInputException;
-import exception.TaskNotFoundException;
+import model.*;
+import service.*;
+import exception.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,7 +23,7 @@ public class TaskTests {
         taskService = new TaskService(projectService);
 
         // Add a base project for testing
-        projectService.createProject(new SoftwareProject("P006", "Test", "Desc", 1000.0, 5, 5, "Java"));
+        projectService.createProject(new SoftwareProject("P006", "Test", "Desc", 1000.0, 5, "Java"));
     }
 
     @Test

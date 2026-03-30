@@ -11,15 +11,15 @@ public class SoftwareProject extends Project {
 
     // ── Constructors (overloaded) ─────────────────────────────────────────────
     public SoftwareProject(String id, String name, String description,
-                           double budget, int teamSize, int maxTasks, String programmingLanguage) {
-        super(id, name, description, budget, teamSize, maxTasks);
+                           double budget, int teamSize, String programmingLanguage) {
+        super(id, name, description, budget, teamSize);
         this.programmingLanguage = programmingLanguage;
     }
 
     /** Overloaded constructor with a default language. */
     public SoftwareProject(String id, String name, String description,
-                           double budget, int teamSize, int maxTasks) {
-        this(id, name, description, budget, teamSize, maxTasks, "Java");
+                           double budget, int teamSize) {
+        this(id, name, description, budget, teamSize, "Java");
     }
 
     // ── Abstract method implementation ────────────────────────────────────────
